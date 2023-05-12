@@ -1,3 +1,4 @@
+// Import required modules
 const db = require('./config/dbConnection');
 const DbInterface = require('./lib/DbInterface');
 
