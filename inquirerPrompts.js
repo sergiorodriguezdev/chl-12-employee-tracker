@@ -33,6 +33,10 @@ const initialOptions = [
         value: 'updateEmployeeRole'
     },
     {
+        name: 'View Department Budget',
+        value: 'viewDeptBudget'
+    },
+    {
         name: 'Exit',
         value: 'exit'
     }
@@ -162,6 +166,13 @@ const questions = [
         choices: () => getList('roles', false),
         name: 'roleUpdate',
         when: (answers) => answers['option'] === 'updateEmployeeRole'
+    },
+    {
+        type: 'list',
+        message: 'Select a department:',
+        choices: () => getList('departments', false),
+        name: 'viewBudgetDeptId',
+        when: (answers) => answers['option'] === 'viewDeptBudget'
     }
 ];
 

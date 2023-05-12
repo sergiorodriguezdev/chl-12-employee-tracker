@@ -19,16 +19,25 @@ function init() {
                 getAllEntries(answers['option']);
             }
             else if (answers['option'] === 'addDept' ||
-                     answers['option'] === 'addRole' ||
-                     answers['option'] === 'addEmployee'
+                answers['option'] === 'addRole' ||
+                answers['option'] === 'addEmployee'
             ) {
+                // If user selects to add department/role/employee,
+                //  call function and pass answers object
                 addEntry(answers);
             }
             else if (answers['option'] === 'updateEmployeeRole') {
+                // If user selects to update employee's role, 
+                //  call function and pass the employee's ID and new role ID
                 updateEmployeeRole(
                     answers['employeeRoleUpdate'],
                     answers['roleUpdate']
-                )
+                );
+            }
+            else if (answers['option'] === 'viewDeptBudget') {
+                // If user selects to view department budget,
+                //  call function and pass the department's ID
+                viewDepartmentBudget(answers['viewBudgetDeptId']);
             }
             else if (answers['option'] === 'exit') {
                 process.exit(0); // Exit app gracefully
@@ -142,6 +151,26 @@ function updateEmployeeRole(employeeId, employeeRoleId) {
 
         console.log('\n');
         console.log(`Updated employee's role`);
+
+        // Restart prompts
+        init();
+    });
+}
+
+// View department budget function
+function viewDepartmentBudget(departmentId) {
+    // Get SELECT statement
+    query = DbInterface.getDepartmentBudget(departmentId);
+
+    // Execute query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('\n');
+        console.log(consoleTable.getTable(results));
 
         // Restart prompts
         init();
