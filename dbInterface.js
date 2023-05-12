@@ -24,6 +24,16 @@ class DbInterface {
     static addDepartment(name) {
         return `INSERT INTO department (name) VALUES ("${name}");`
     }
+
+    static addRole(title, salary, departmentId) {
+        return `INSERT INTO role (title, salary, department_id) 
+        VALUES ("${title}", ${salary}, ${departmentId});`
+    }
+
+    static getDepartmentList(){
+        return `SELECT name AS name, id AS value FROM department
+        ORDER BY id;`
+    }
 }
 
 module.exports = DbInterface;
