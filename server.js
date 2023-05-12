@@ -2,7 +2,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const consoleTable = require('console.table');
-const dbInterface = require('./dbInterface');
+const DbInterface = require('./DbInterface');
 
 // Connect to MySQL instance
 const db = mysql.createConnection(
@@ -29,6 +29,10 @@ const initialOptions = [
         value: 'getAllEmployees'
     },
     {
+        name: 'Add Department',
+        value: 'addDept'
+    },
+    {
         name: 'Exit',
         value: 'exit'
     }
@@ -41,6 +45,20 @@ const questions = [
         message: 'What woud you like to do?',
         choices: initialOptions,
         name: 'option'
+    },
+    {
+        type: 'input',
+        message: 'What is the name of the Department?',
+        name: 'newDeptName',
+        filter: (value) => value.trim(),
+        validate: (value) => {
+            if (value.length) {
+                return true;
+            } else {
+                return 'Please enter a value';
+            }
+        },
+        when: (answers) => answers['option'] === 'addDept'
     }
 ];
 
@@ -52,28 +70,28 @@ function init() {
                 answers['option'] === 'getAllRoles' ||
                 answers['option'] === 'getAllEmployees'
             ) {
-                // console.table(getAllEntries(answers['option']));
                 getAllEntries(answers['option']);
+            }
+            else if (answers['option'] === 'addDept') {
+                addDepartment(answers['newDeptName']);
             }
             else if (answers['option'] === 'exit') {
                 process.exit(0);
             }
-
-            // init();
         });
     
 };
 
-async function getAllEntries(option) {
+function getAllEntries(option) {
     switch(option) {
         case 'getAllDepts':
-            query = dbInterface.getAllDepartments();
+            query = DbInterface.getAllDepartments();
             break;
         case 'getAllRoles':
-            query = dbInterface.getAllRoles();
+            query = DbInterface.getAllRoles();
             break;
         case 'getAllEmployees':
-            query = dbInterface.getAllEmployees();
+            query = DbInterface.getAllEmployees();
             break;
         default:
             console.log(`There's an error...`)
@@ -88,6 +106,21 @@ async function getAllEntries(option) {
 
         console.log('\n');
         console.log(consoleTable.getTable(results));
+        init();
+    })
+}
+
+function addDepartment(departmentName) {
+    query = DbInterface.addDepartment(departmentName);
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('\n');
+        console.log(`Added ${departmentName} to the database`);
         init();
     })
 }

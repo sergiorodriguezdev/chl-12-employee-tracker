@@ -1,4 +1,4 @@
-class dbInterface {
+class DbInterface {
     static getAllDepartments() {
         return `SELECT id AS ID, name AS Name FROM department 
         ORDER BY id;`;
@@ -20,6 +20,10 @@ class dbInterface {
         JOIN department ON role.department_id = department.id
         ORDER BY employee.id;`;
     };
+
+    static addDepartment(name) {
+        return `INSERT INTO department (name) VALUES ("${name}");`
+    }
 }
 
-module.exports = dbInterface;
+module.exports = DbInterface;
