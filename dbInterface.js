@@ -35,6 +35,12 @@ class DbInterface {
         VALUES ("${firstName}", "${lastName}", ${roleId}, ${managerId});`
     }
 
+    static updateEmployeeRole(id, roleId) {
+        return `UPDATE employee
+        SET role_id = ${roleId}
+        WHERE id = ${id};`
+    }
+
     static getDepartmentList(){
         return `SELECT name AS name, id AS value FROM department
         ORDER BY id;`
@@ -45,11 +51,16 @@ class DbInterface {
         ORDER BY id;`
     }
 
-    static getEmployeeList(){
-        return `SELECT "None" AS name, NULL AS value
-        UNION
-        SELECT CONCAT(first_name, " ", last_name) AS name, id AS value FROM employee
-        ORDER BY value;`
+    static getEmployeeList(includeNone){
+        let query = `SELECT CONCAT(first_name, " ", last_name) AS name, id AS value FROM employee
+        ORDER BY value;`;
+
+        if (includeNone) {
+            query = `SELECT "None" AS name, NULL AS value
+            UNION ${query}`;
+        }
+
+        return query;
     }
 }
 

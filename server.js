@@ -41,10 +41,35 @@ const initialOptions = [
         value: 'addEmployee'
     },
     {
+        name: 'Update Employee Role',
+        value: 'updateEmployeeRole'
+    },
+    {
         name: 'Exit',
         value: 'exit'
     }
 ]
+
+// Filter and Validation functions
+const filterInput = (value) => value.trim();
+
+const validateInput = (value) => {
+    if (value.length) {
+        return true;
+    } else {
+        return 'Please enter a value';
+    }
+};
+
+const filterSalary = (value) => (Number.isNaN(value) || value < 0) ? '' : value;
+
+const validateSalary = (value) => {
+    if (value > 0) {
+        return true;
+    } else {
+        return 'Please enter a correct salary amount';
+    }
+};
 
 // Array of questions
 const questions = [
@@ -58,44 +83,24 @@ const questions = [
         type: 'input',
         message: 'What is the name of the department?',
         name: 'newDeptName',
-        filter: (value) => value.trim(),
-        validate: (value) => {
-            if (value.length) {
-                return true;
-            } else {
-                return 'Please enter a value';
-            }
-        },
+        filter: filterInput,
+        validate: validateInput,
         when: (answers) => answers['option'] === 'addDept'
     },
     {
         type: 'input',
         message: 'What is the title of the role?',
         name: 'newRoleTitle',
-        filter: (value) => value.trim(),
-        validate: (value) => {
-            if (value.length) {
-                return true;
-            } else {
-                return 'Please enter a value';
-            }
-        },
+        filter: filterInput,
+        validate: validateInput,
         when: (answers) => answers['option'] === 'addRole'
     },
     {
         type: 'number',
         message: 'What is the salary of the role?',
         name: 'newRoleSalary',
-        filter: (value) => {
-            return (Number.isNaN(value) || value < 0) ? '' : value;
-        },
-        validate: (value) => {
-            if (value > 0) {
-                return true;
-            } else {
-                return 'Please enter a correct salary amount';
-            }
-        },
+        filter: filterSalary,
+        validate: validateSalary,
         when: (answers) => answers['option'] === 'addRole'
     },
     {
@@ -109,28 +114,16 @@ const questions = [
         type: 'input',
         message: 'What is the employee\'s first name?',
         name: 'newEmployeeFName',
-        filter: (value) => value.trim(),
-        validate: (value) => {
-            if (value.length) {
-                return true;
-            } else {
-                return 'Please enter a value';
-            }
-        },
+        filter: filterInput,
+        validate: validateInput,
         when: (answers) => answers['option'] === 'addEmployee'
     },
     {
         type: 'input',
         message: 'What is the employee\'s last name?',
         name: 'newEmployeeLName',
-        filter: (value) => value.trim(),
-        validate: (value) => {
-            if (value.length) {
-                return true;
-            } else {
-                return 'Please enter a value';
-            }
-        },
+        filter: filterInput,
+        validate: validateInput,
         when: (answers) => answers['option'] === 'addEmployee'
     },
     {
@@ -143,9 +136,23 @@ const questions = [
     {
         type: 'list',
         message: 'Who is the employee\'s manager?',
-        choices: () => getList('employees'),
+        choices: () => getList('employees', true),
         name: 'newEmployeeMgr',
         when: (answers) => answers['option'] === 'addEmployee'
+    },
+    {
+        type: 'list',
+        message: 'Which employee\'s role do you want to update?',
+        choices: () => getList('employees', false),
+        name: 'employeeRoleUpdate',
+        when: (answers) => answers['option'] === 'updateEmployeeRole'
+    },
+    {
+        type: 'list',
+        message: 'Which role do you want to assign to the selected employee?',
+        choices: () => getList('roles', false),
+        name: 'roleUpdate',
+        when: (answers) => answers['option'] === 'updateEmployeeRole'
     }
 ];
 
@@ -175,6 +182,12 @@ function init() {
                     answers['newEmployeeRole'],
                     answers['newEmployeeMgr']
                 );
+            }
+            else if (answers['option'] === 'updateEmployeeRole') {
+                updateEmployeeRole(
+                    answers['employeeRoleUpdate'],
+                    answers['roleUpdate']
+                )
             }
             else if (answers['option'] === 'exit') {
                 process.exit(0);
@@ -256,7 +269,22 @@ function addEmployee(employeeFName, employeeLName, employeeRoleId, employeeMgrId
     });
 }
 
-async function getList(type) {
+function updateEmployeeRole(employeeId, employeeRoleId) {
+    query = DbInterface.updateEmployeeRole(employeeId, employeeRoleId);
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('\n');
+        console.log(`Updated employee's role`);
+        init();
+    });
+}
+
+async function getList(type, includeNone) {
     switch (type) {
         case 'departments':
             query = DbInterface.getDepartmentList();
@@ -265,7 +293,7 @@ async function getList(type) {
             query = DbInterface.getRoleList();
             break;
         case 'employees':
-            query = DbInterface.getEmployeeList();
+            query = DbInterface.getEmployeeList(includeNone);
             break;
         default:
             console.log(`There's an error...`)
