@@ -37,6 +37,10 @@ const initialOptions = [
         value: 'addRole'
     },
     {
+        name: 'Add Employee',
+        value: 'addEmployee'
+    },
+    {
         name: 'Exit',
         value: 'exit'
     }
@@ -97,9 +101,51 @@ const questions = [
     {
         type: 'list',
         message: 'Which department does this role belong to?',
-        choices: () => getList('roles'),
+        choices: () => getList('departments'),
         name: 'newRoleDept',
         when: (answers) => answers['option'] === 'addRole'
+    },
+    {
+        type: 'input',
+        message: 'What is the employee\'s first name?',
+        name: 'newEmployeeFName',
+        filter: (value) => value.trim(),
+        validate: (value) => {
+            if (value.length) {
+                return true;
+            } else {
+                return 'Please enter a value';
+            }
+        },
+        when: (answers) => answers['option'] === 'addEmployee'
+    },
+    {
+        type: 'input',
+        message: 'What is the employee\'s last name?',
+        name: 'newEmployeeLName',
+        filter: (value) => value.trim(),
+        validate: (value) => {
+            if (value.length) {
+                return true;
+            } else {
+                return 'Please enter a value';
+            }
+        },
+        when: (answers) => answers['option'] === 'addEmployee'
+    },
+    {
+        type: 'list',
+        message: 'What is the employee\'s role?',
+        choices: () => getList('roles'),
+        name: 'newEmployeeRole',
+        when: (answers) => answers['option'] === 'addEmployee'
+    },
+    {
+        type: 'list',
+        message: 'Who is the employee\'s manager?',
+        choices: () => getList('employees'),
+        name: 'newEmployeeMgr',
+        when: (answers) => answers['option'] === 'addEmployee'
     }
 ];
 
@@ -119,8 +165,15 @@ function init() {
             }
             else if (answers['option'] === 'addRole') {
                 addRole(answers['newRoleTitle'],
-                        answers['newRoleSalary'],
-                        answers['newRoleDept']
+                    answers['newRoleSalary'],
+                    answers['newRoleDept']
+                );
+            }
+            else if (answers['option'] === 'addEmployee') {
+                addEmployee(answers['newEmployeeFName'],
+                    answers['newEmployeeLName'],
+                    answers['newEmployeeRole'],
+                    answers['newEmployeeMgr']
                 );
             }
             else if (answers['option'] === 'exit') {
@@ -188,9 +241,36 @@ function addRole(roleTitle, roleSalary, roleDepartmentId) {
     });
 }
 
-async function getList(type) {
-    query = DbInterface.getDepartmentList();
+function addEmployee(employeeFName, employeeLName, employeeRoleId, employeeMgrId) {
+    query = DbInterface.addEmployee(employeeFName, employeeLName, employeeRoleId, employeeMgrId);
 
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('\n');
+        console.log(`Added ${employeeFName} ${employeeLName} to the database`);
+        init();
+    });
+}
+
+async function getList(type) {
+    switch (type) {
+        case 'departments':
+            query = DbInterface.getDepartmentList();
+            break;
+        case 'roles':
+            query = DbInterface.getRoleList();
+            break;
+        case 'employees':
+            query = DbInterface.getEmployeeList();
+            break;
+        default:
+            console.log(`There's an error...`)
+            return;
+    };
     results = await db.promise().query(query);
 
     return results[0];

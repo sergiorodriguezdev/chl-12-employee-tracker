@@ -30,9 +30,26 @@ class DbInterface {
         VALUES ("${title}", ${salary}, ${departmentId});`
     }
 
+    static addEmployee(firstName, lastName, roleId, managerId) {
+        return `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+        VALUES ("${firstName}", "${lastName}", ${roleId}, ${managerId});`
+    }
+
     static getDepartmentList(){
         return `SELECT name AS name, id AS value FROM department
         ORDER BY id;`
+    }
+
+    static getRoleList(){
+        return `SELECT title AS name, id AS value FROM role
+        ORDER BY id;`
+    }
+
+    static getEmployeeList(){
+        return `SELECT "None" AS name, NULL AS value
+        UNION
+        SELECT CONCAT(first_name, " ", last_name) AS name, id AS value FROM employee
+        ORDER BY value;`
     }
 }
 
