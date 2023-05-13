@@ -37,6 +37,18 @@ const initialOptions = [
         value: 'viewDeptBudget'
     },
     {
+        name: 'Delete Department',
+        value: 'delDept'
+    },
+    {
+        name: 'Delete Role',
+        value: 'delRole'
+    },
+    {
+        name: 'Delete Employee',
+        value: 'delEmployee'
+    },
+    {
         name: 'Exit',
         value: 'exit'
     }
@@ -171,8 +183,23 @@ const questions = [
         type: 'list',
         message: 'Select a department:',
         choices: () => getList('departments', false),
-        name: 'viewBudgetDeptId',
-        when: (answers) => answers['option'] === 'viewDeptBudget'
+        name: 'departmentId',
+        // This prompt will be used under 2 selections
+        when: (answers) => answers['option'] === 'viewDeptBudget' || answers['option'] === 'delDept'
+    },
+    {
+        type: 'list',
+        message: 'Select a role:',
+        choices: () => getList('roles', false),
+        name: 'roleId',
+        when: (answers) => answers['option'] === 'delRole'
+    },
+    {
+        type: 'list',
+        message: 'Select an employee:',
+        choices: () => getList('employees', false),
+        name: 'employeeId',
+        when: (answers) => answers['option'] === 'delEmployee'
     }
 ];
 

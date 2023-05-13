@@ -37,7 +37,13 @@ function init() {
             else if (answers['option'] === 'viewDeptBudget') {
                 // If user selects to view department budget,
                 //  call function and pass the department's ID
-                viewDepartmentBudget(answers['viewBudgetDeptId']);
+                viewDepartmentBudget(answers['departmentId']);
+            }
+            else if (answers['option'] === 'delDept' ||
+                answers['option'] === 'delRole' ||
+                answers['option'] === 'delEmployee'
+            ) {
+                deleteEntry(answers);
             }
             else if (answers['option'] === 'exit') {
                 process.exit(0); // Exit app gracefully
@@ -171,6 +177,49 @@ function viewDepartmentBudget(departmentId) {
 
         console.log('\n');
         console.log(consoleTable.getTable(results));
+
+        // Restart prompts
+        init();
+    });
+}
+
+// Delete an entry of any type: department, role, or employee
+function deleteEntry(answers) {
+    let tableName;
+    let entryId;
+
+    // Depending on the option selected,
+    //  set variables with the appropriate values
+    switch (answers['option']) {
+        case 'delDept':
+            tableName = 'department';
+            entryId = answers['departmentId'];
+            break;
+        case 'delRole':
+            tableName = 'role';
+            entryId = answers['roleId'];
+            break;
+        case 'delEmployee':
+            tableName = 'employee';
+            entryId = answers['employeeId'];
+            break;
+        default:
+            console.log(`There's an error...`)
+            return;
+    };
+
+    // Get DELETE statement
+    query = DbInterface.deleteEntry(tableName, entryId);
+
+    // Execute query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('\n');
+        console.log(`Deleted ${tableName}`);
 
         // Restart prompts
         init();
