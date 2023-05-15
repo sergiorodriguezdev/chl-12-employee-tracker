@@ -49,6 +49,14 @@ const initialOptions = [
         value: 'delEmployee'
     },
     {
+        name: 'View Employees by Manager',
+        value: 'viewEmployeesByMgr'
+    },
+    {
+        name: 'View Employees by Department',
+        value: 'viewEmployeesByDept'
+    },
+    {
         name: 'Exit',
         value: 'exit'
     }
@@ -86,6 +94,9 @@ async function getList(type, includeNone) {
             break;
         case 'employees':
             query = DbInterface.getEmployeeList(includeNone);
+            break;
+        case 'managers':
+            query = DbInterface.getManagerList();
             break;
         default:
             console.log(`There's an error...`)
@@ -184,8 +195,10 @@ const questions = [
         message: 'Select a department:',
         choices: () => getList('departments', false),
         name: 'departmentId',
-        // This prompt will be used under 2 selections
-        when: (answers) => answers['option'] === 'viewDeptBudget' || answers['option'] === 'delDept'
+        // This prompt will be used under 3 selections
+        when: (answers) => answers['option'] === 'viewDeptBudget' || 
+                            answers['option'] === 'delDept' ||
+                            answers['option'] === 'viewEmployeesByDept'
     },
     {
         type: 'list',
@@ -200,6 +213,13 @@ const questions = [
         choices: () => getList('employees', false),
         name: 'employeeId',
         when: (answers) => answers['option'] === 'delEmployee'
+    },
+    {
+        type: 'list',
+        message: 'Select a manager:',
+        choices: () => getList('managers', false),
+        name: 'managerId',
+        when: (answers) => answers['option'] === 'viewEmployeesByMgr'
     }
 ];
 

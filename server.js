@@ -43,7 +43,15 @@ function init() {
                 answers['option'] === 'delRole' ||
                 answers['option'] === 'delEmployee'
             ) {
+                // If user selects to delete department/role/employee,
+                //  call function and pass answers object
                 deleteEntry(answers);
+            }
+            else if (answers['option'] === 'viewEmployeesByMgr') {
+                viewEmployeesByMgr(answers['managerId']);
+            }
+            else if (answers['option'] === 'viewEmployeesByDept') {
+                viewEmployeesByDept(answers['departmentId']);
             }
             else if (answers['option'] === 'exit') {
                 process.exit(0); // Exit app gracefully
@@ -167,6 +175,46 @@ function updateEmployeeRole(employeeId, employeeRoleId) {
 function viewDepartmentBudget(departmentId) {
     // Get SELECT statement
     query = DbInterface.getDepartmentBudget(departmentId);
+
+    // Execute query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('\n');
+        console.log(consoleTable.getTable(results));
+
+        // Restart prompts
+        init();
+    });
+}
+
+// View list of employees filtered by manager
+function viewEmployeesByMgr(managerId) {
+    // Get SELECT statement
+    query = DbInterface.getEmployeesByManager(managerId);
+
+    // Execute query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('\n');
+        console.log(consoleTable.getTable(results));
+
+        // Restart prompts
+        init();
+    });
+}
+
+// View list of employees filtered by department
+function viewEmployeesByDept(departmentId) {
+    // Get SELECT statement
+    query = DbInterface.getEmployeesByDept(departmentId);
 
     // Execute query
     db.query(query, (err, results) => {
