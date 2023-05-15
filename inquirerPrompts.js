@@ -1,65 +1,73 @@
 // Import required modules
 const db = require('./config/dbConnection');
 const DbInterface = require('./lib/DbInterface');
+const inquirer = require('inquirer');
 
 // Array of options
 const initialOptions = [
+    new inquirer.Separator('Admin'),
+    new inquirer.Separator(' Add'),
     {
-        name: 'View All Departments',
-        value: 'getAllDepts'
-    },
-    {
-        name: 'View All Roles',
-        value: 'getAllRoles'
-    },
-    {
-        name: 'View All Employees',
-        value: 'getAllEmployees'
-    },
-    {
-        name: 'Add Department',
+        name: '  Add Department',
         value: 'addDept'
     },
     {
-        name: 'Add Role',
+        name: '  Add Role',
         value: 'addRole'
     },
     {
-        name: 'Add Employee',
+        name: '  Add Employee',
         value: 'addEmployee'
     },
+    new inquirer.Separator(' Update'),
     {
-        name: 'Update Employee Role',
+        name: '  Update Employee Role',
         value: 'updateEmployeeRole'
     },
     {
-        name: 'Update Employee\'s Manager',
+        name: '  Update Employee\'s Manager',
         value: 'updateEmployeeManager'
     },
+    new inquirer.Separator(' Delete'),
     {
-        name: 'View Department Budget',
-        value: 'viewDeptBudget'
-    },
-    {
-        name: 'Delete Department',
+        name: '  Delete Department',
         value: 'delDept'
     },
     {
-        name: 'Delete Role',
+        name: '  Delete Role',
         value: 'delRole'
     },
     {
-        name: 'Delete Employee',
+        name: '  Delete Employee',
         value: 'delEmployee'
     },
+    new inquirer.Separator(),
+    new inquirer.Separator('Reports'),
     {
-        name: 'View Employees by Manager',
+        name: ' View All Departments',
+        value: 'getAllDepts'
+    },
+    {
+        name: ' View All Roles',
+        value: 'getAllRoles'
+    },
+    {
+        name: ' View All Employees',
+        value: 'getAllEmployees'
+    },
+    {
+        name: ' View Employees by Manager',
         value: 'viewEmployeesByMgr'
     },
     {
-        name: 'View Employees by Department',
+        name: ' View Employees by Department',
         value: 'viewEmployeesByDept'
     },
+    {
+        name: ' View Department Budget',
+        value: 'viewDeptBudget'
+    },
+    new inquirer.Separator(),
     {
         name: 'Exit',
         value: 'exit'
