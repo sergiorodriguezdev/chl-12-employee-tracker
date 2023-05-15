@@ -53,6 +53,14 @@ function init() {
             else if (answers['option'] === 'viewEmployeesByDept') {
                 viewEmployeesByDept(answers['departmentId']);
             }
+            else if (answers['option'] === 'updateEmployeeManager') {
+                // If user selects to update employee's manager, 
+                //  call function and pass the employee's ID and new manager's ID
+                updateEmployeeManager(
+                    answers['employeeId'],
+                    answers['newEmployeeMgr']
+                );
+            }
             else if (answers['option'] === 'exit') {
                 process.exit(0); // Exit app gracefully
             }
@@ -165,6 +173,26 @@ function updateEmployeeRole(employeeId, employeeRoleId) {
 
         console.log('\n');
         console.log(`Updated employee's role`);
+
+        // Restart prompts
+        init();
+    });
+}
+
+// Update employee manager function
+function updateEmployeeManager(employeeId, employeeManagerId) {
+    // Get UPDATE statement
+    query = DbInterface.updateEmployeeManager(employeeId, employeeManagerId);
+
+    // Execute query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('\n');
+        console.log(`Updated employee's manager`);
 
         // Restart prompts
         init();

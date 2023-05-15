@@ -33,6 +33,10 @@ const initialOptions = [
         value: 'updateEmployeeRole'
     },
     {
+        name: 'Update Employee\'s Manager',
+        value: 'updateEmployeeManager'
+    },
+    {
         name: 'View Department Budget',
         value: 'viewDeptBudget'
     },
@@ -171,13 +175,6 @@ const questions = [
     },
     {
         type: 'list',
-        message: 'Who is the employee\'s manager?',
-        choices: () => getList('employees', true),
-        name: 'newEmployeeMgr',
-        when: (answers) => answers['option'] === 'addEmployee'
-    },
-    {
-        type: 'list',
         message: 'Which employee\'s role do you want to update?',
         choices: () => getList('employees', false),
         name: 'employeeRoleUpdate',
@@ -209,10 +206,12 @@ const questions = [
     },
     {
         type: 'list',
-        message: 'Select an employee:',
+        // Dynamically set the prompt text based on a previous prompt selection
+        message: (answers) => (answers['option'] === 'delEmployee') ? 'Select an employee:' : 'Which employee\'s manager do you want to udpate',
         choices: () => getList('employees', false),
         name: 'employeeId',
-        when: (answers) => answers['option'] === 'delEmployee'
+        // This prompt will be used under 2 selections
+        when: (answers) => answers['option'] === 'delEmployee' || answers['option'] === 'updateEmployeeManager'
     },
     {
         type: 'list',
@@ -220,6 +219,15 @@ const questions = [
         choices: () => getList('managers', false),
         name: 'managerId',
         when: (answers) => answers['option'] === 'viewEmployeesByMgr'
+    },
+    {
+        type: 'list',
+        // Dynamically set the prompt text based on a previous prompt selection
+        message: (answers) => (answers['option'] === 'addEmployee') ? 'Who is the employee\'s manager?' : 'Who is the employee\'s new manager?',
+        choices: () => getList('employees', true),
+        name: 'newEmployeeMgr',
+        // This prompt will be used under 2 selections
+        when: (answers) => answers['option'] === 'addEmployee' || answers['option'] === 'updateEmployeeManager'
     }
 ];
 
