@@ -90,7 +90,7 @@ npm install mysql2@2.2.5
     Replace `<PATH TO REPO DIRECTORY>` with the actual path to the root directory of the repo.
 
 3. ### Seeding the database (OPTIONAL)
-    To seed the database, you must first create the database schema (step 1 above), then run the `seeds.sql` script. While connected to your MySQL server, run the following command:
+    To seed the database, you must first create the database schema (step 2 above), then run the `seeds.sql` script. While connected to your MySQL server, run the following command:
     ```
     SOURCE <PATH TO REPO DIRECTORY>/db/seeds.sql;
     ```
